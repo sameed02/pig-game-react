@@ -1,17 +1,40 @@
+import { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [showDice, setShowDice] = useState(false);
+  const [imgSrc, setImgSrc] = useState("");
+  const [currScore, setCurrScore] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
+  const [toggleActive, setToggleActive] = useState("player--active");
+  const rollDice = function () {
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+    setShowDice(() => true);
+    setImgSrc((src) => (src = randomNumber));
+    addCurrScore(randomNumber);
+  };
+  const addCurrScore = function (dicNum) {
+    setCurrScore((score) => score + dicNum);
+  };
+  const holdScore = function () {
+    setTotalScore((score) => score + currScore);
+  };
+
+  const changeActivePlayer = function () {
+    // when dice = 0
+    // when userClcks on hold button
+  };
   return (
     <div className="App">
       <main>
         <Section
           pNum={"0"}
-          playerActive={"player--active"}
+          playerActive={toggleActive}
           idName={"0"}
           idScore={"0"}
           idCurrent={"0"}
-          score={43}
-          currScore={0}
+          score={totalScore}
+          currScore={currScore}
         />
         <Section
           pNum={"1"}
@@ -19,13 +42,19 @@ function App() {
           idName={"1"}
           idScore={"1"}
           idCurrent={"1"}
-          score={24}
-          currScore={2}
+          score={totalScore}
+          currScore={currScore}
         />
-        <Img imgSrc={"5"} />
-        <Button btnType={"btn--new"}>🔄 New game</Button>
-        <Button btnType={"btn--roll"}>🎲 Roll dice</Button>
-        <Button btnType={"btn--hold"}>📥 Hold</Button>
+        {showDice && <Img imgSrc={imgSrc} />}
+        <Button btnType={"btn--new"} handlerClick={() => {}}>
+          🔄 New game
+        </Button>
+        <Button btnType={"btn--roll"} handlerClick={rollDice}>
+          🎲 Roll dice
+        </Button>
+        <Button btnType={"btn--hold"} handlerClick={holdScore}>
+          📥 Hold
+        </Button>
       </main>
     </div>
   );
@@ -66,6 +95,10 @@ function Img({ imgSrc }) {
   );
 }
 
-function Button({ btnType, children }) {
-  return <button className={`btn ${btnType}`}>{children}</button>;
+function Button({ handlerClick, btnType, children }) {
+  return (
+    <button className={`btn ${btnType}`} onClick={handlerClick}>
+      {children}
+    </button>
+  );
 }
