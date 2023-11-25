@@ -4,13 +4,14 @@ import "./App.css";
 function App() {
   const playerActive = "player--active";
   const [showDice, setShowDice] = useState(false);
-  const [imgSrc, setImgSrc] = useState("");
+  const [imgSrc, setImgSrc] = useState();
   const [currScore, setCurrScore] = useState(0);
   const [currScore1, setCurrScore1] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const [totalScore1, setTotalScore1] = useState(0);
   const [activePlayer, setActivePlayer] = useState(0);
   const [winner, setWinner] = useState(null);
+  const [lastCurrentScore, setLastCurrentScore] = useState(0);
 
   const rollDice = function () {
     const randomNumber = Math.floor(Math.random() * 6) + 1;
@@ -40,16 +41,21 @@ function App() {
   const holdScore = function () {
     let updatedTotalScore;
     let updatedCurrScore;
+    let lastScore;
     if (activePlayer === 0) {
       updatedTotalScore = totalScore + currScore;
+      lastScore = currScore;
       updatedCurrScore = 0;
       setTotalScore((prevScore) => prevScore + currScore);
       setCurrScore(updatedCurrScore);
+      setLastCurrentScore(lastScore);
     } else if (activePlayer === 1) {
       updatedTotalScore = totalScore1 + currScore1;
+      lastScore = currScore1;
       updatedCurrScore = 0;
       setTotalScore1((prevScore) => prevScore + currScore1);
       setCurrScore1(updatedCurrScore);
+      setLastCurrentScore(lastScore);
     }
 
     checkWinner(updatedTotalScore);
@@ -61,6 +67,17 @@ function App() {
     } else {
       changeActivePlayer();
     }
+  };
+
+  const resetGame = function () {
+    setActivePlayer(0);
+    setWinner(null);
+    setImgSrc("");
+    setShowDice(false);
+    setCurrScore(0);
+    setCurrScore1(0);
+    setTotalScore(0);
+    setTotalScore1(0);
   };
 
   return (
@@ -77,6 +94,7 @@ function App() {
           player={1}
           activePlayer={activePlayer}
           winner={winner}
+          lastCurrScore={lastCurrentScore}
         />
         <Section
           pNum={"1"}
@@ -89,9 +107,10 @@ function App() {
           player={2}
           activePlayer={activePlayer}
           winner={winner}
+          lastCurrScore={lastCurrentScore}
         />
         {showDice && <Img imgSrc={imgSrc} winner={winner} />}
-        <Button btnType={"btn--new"} handlerClick={() => {}}>
+        <Button btnType={"btn--new"} handlerClick={resetGame}>
           🔄 New game
         </Button>
         <Button btnType={"btn--roll"} handlerClick={rollDice} winner={winner}>
@@ -120,6 +139,7 @@ function Section({
   player,
   activePlayer,
   winner,
+  lastCurrScore,
 }) {
   const isActivePlayer = activePlayer === Number(pNum);
   const isWinner = winner === Number(pNum);
@@ -138,7 +158,17 @@ function Section({
       <div className="current">
         <p className="current-label">Current</p>
         <p className="current-score" id={`current--${idCurrent}`}>
-          {isActivePlayer ? (activePlayer === 0 ? currScore : currScore1) : "0"}
+          {winner !== null
+            ? isActivePlayer
+              ? activePlayer === 0
+                ? lastCurrScore
+                : lastCurrScore
+              : "0"
+            : isActivePlayer
+            ? activePlayer === 0
+              ? currScore
+              : currScore1
+            : "0"}
         </p>
       </div>
     </section>
@@ -171,7 +201,12 @@ function Button({ handlerClick, btnType, children, winner }) {
         backgroundColor:
           winner !== null &&
           (btnType === "btn--roll" || btnType === "btn--hold")
-            ? "#c7365f"
+            ? "#2f2f2f"
+            : "inherit",
+        color:
+          winner !== null &&
+          (btnType === "btn--roll" || btnType === "btn--hold")
+            ? "#fff"
             : "inherit",
       }}
     >
