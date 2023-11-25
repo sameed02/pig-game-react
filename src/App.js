@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
@@ -94,10 +94,10 @@ function App() {
         <Button btnType={"btn--new"} handlerClick={() => {}}>
           🔄 New game
         </Button>
-        <Button btnType={"btn--roll"} handlerClick={rollDice}>
+        <Button btnType={"btn--roll"} handlerClick={rollDice} winner={winner}>
           🎲 Roll dice
         </Button>
-        <Button btnType={"btn--hold"} handlerClick={holdScore}>
+        <Button btnType={"btn--hold"} handlerClick={holdScore} winner={winner}>
           📥 Hold
         </Button>
       </main>
@@ -159,9 +159,22 @@ function Img({ imgSrc, winner }) {
   );
 }
 
-function Button({ handlerClick, btnType, children }) {
+function Button({ handlerClick, btnType, children, winner }) {
   return (
-    <button className={`btn ${btnType}`} onClick={handlerClick}>
+    <button
+      className={`btn ${btnType}`}
+      onClick={handlerClick}
+      disabled={
+        winner !== null && (btnType === "btn--hold" || btnType === "btn--roll")
+      }
+      style={{
+        backgroundColor:
+          winner !== null &&
+          (btnType === "btn--roll" || btnType === "btn--hold")
+            ? "#c7365f"
+            : "inherit",
+      }}
+    >
       {children}
     </button>
   );
