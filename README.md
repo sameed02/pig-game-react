@@ -1,3 +1,6 @@
+# The pig game project was part of the @jonasschmedtmann JavaScript course, i've re-created this project using react. 
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
